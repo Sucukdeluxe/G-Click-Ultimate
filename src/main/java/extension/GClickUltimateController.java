@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 @ExtensionInfo(
         Title =  "G-Click Ultimate",
         Description =  "Ultimate clicking tools",
-        Version =  "0.1.2",
+        Version =  "0.1.3",
         Author =  "sirjonasxx"
 )
 public class GClickUltimateController extends ExtensionForm {
