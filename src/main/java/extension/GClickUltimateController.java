@@ -4,21 +4,24 @@ import extension.game.FloorState;
 import extension.game.FurniDataTools;
 import extension.listeners.EnabledListener;
 import extension.tools.*;
+import gearth.extensions.ExtensionBase;
 import gearth.extensions.ExtensionForm;
 import gearth.extensions.ExtensionInfo;
 import gearth.misc.listenerpattern.Observable;
+import gearth.protocol.HMessage;
 import javafx.beans.InvalidationListener;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import misc.Functions;
 
 import java.util.function.Consumer;
 
 @ExtensionInfo(
         Title =  "G-Click Ultimate",
         Description =  "Ultimate clicking tools",
-        Version =  "0.1.3",
+        Version =  "0.1.4",
         Author =  "sirjonasxx"
 )
 public class GClickUltimateController extends ExtensionForm {
@@ -77,7 +80,13 @@ public class GClickUltimateController extends ExtensionForm {
     @Override
     protected void initExtension() {
         this.floorState = new FloorState(this);
-        onConnect((host, i, s1, s2, hClient) -> furniDataTools = new FurniDataTools(host));
+        onConnect((host, i, s1, s2, hClient) -> {
+            try {
+                furniDataTools = new FurniDataTools(host);
+            } catch (Throwable t) {
+                System.err.println("[G-Click Ultimate] furnidata init failed " + t);
+            }
+        });
         floorState.requestRoom(this);
 
         // javafx spinner updates bugfix
@@ -101,6 +110,21 @@ public class GClickUltimateController extends ExtensionForm {
     @Override
     protected void onEndConnection() {
         disconnectObservable.fireEvent(invalidationListener -> invalidationListener.invalidated(null));
+    }
+
+    @Override
+    public void intercept(HMessage.Direction direction, ExtensionBase.MessageListener messageListener) {
+        super.intercept(direction, Functions.guard(messageListener));
+    }
+
+    @Override
+    public void intercept(HMessage.Direction direction, String headerName, ExtensionBase.MessageListener messageListener) {
+        super.intercept(direction, headerName, Functions.guard(messageListener));
+    }
+
+    @Override
+    public void intercept(HMessage.Direction direction, int headerId, ExtensionBase.MessageListener messageListener) {
+        super.intercept(direction, headerId, Functions.guard(messageListener));
     }
 
     public EnvironmentUtils getEnvironmentUtils() {

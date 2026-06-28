@@ -54,7 +54,7 @@ public class FurniDataTools {
         new Thread(() -> {
             try {
                 fetch(/*onLoadListener*/);
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }).start();
